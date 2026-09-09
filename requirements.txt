@@ -1,0 +1,9 @@
+fastapi
+uvicorn
+numpy
+requests
+pillow
+opencv-python-headless
+open-clip-torch
+torch
+supabase
