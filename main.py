@@ -19,8 +19,8 @@ from rembg import remove
 # =========================
 
 supabase = create_client(
-    os.getenv("SUPABASE_URL"),
-    os.getenv("SUPABASE_KEY")
+    os.getenv("SUPABASE_URLs"),
+    os.getenv("SUPABASE_PRIMARY_KEY")
 )
 
 # =========================
@@ -69,8 +69,8 @@ def root():
 @app.get("/env-test")
 def env_test():
     return {
-        "url_exists": os.getenv("SUPABASE_URL") is not None,
-        "key_exists": os.getenv("SUPABASE_KEY") is not None
+        "url_exists": os.getenv("SUPABASE_URLs") is not None,
+        "key_exists": os.getenv("SUPABASE_PRIMARY_KEY") is not None
     }
 
 # =========================
