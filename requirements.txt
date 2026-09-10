@@ -5,7 +5,7 @@ requests
 pillow
 opencv-python-headless
 torch
-supabase
 torchvision
+supabase
 rembg
 onnxruntime
