@@ -1,5 +1,6 @@
 from fastapi import FastAPI
 from pydantic import BaseModel
+import requests
 
 app = FastAPI()
 
@@ -10,8 +11,12 @@ class ImageRequest(BaseModel):
 def root():
     return {"status": "ok"}
 
-@app.post("/test-image")
-def test_image(data: ImageRequest):
+@app.post("/analyze-image")
+def analyze_image(data: ImageRequest):
+
+    response = requests.get(data.image_url)
+
     return {
-        "received_url": data.image_url
+        "status_code": response.status_code,
+        "size_bytes": len(response.content)
     }
