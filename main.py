@@ -12,8 +12,8 @@ from torchvision import models
 from torchvision import transforms
 
 supabase = create_client(
-    os.getenv("SUPABASE_URL"),
-    os.getenv("SUPABASE_KEY")
+    os.getenv("SUPABASE_URLs"),
+    os.getenv("SUPABASE_PRIMARY_KEY")
 )
 
 app = FastAPI()
