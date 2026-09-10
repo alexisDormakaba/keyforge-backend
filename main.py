@@ -11,12 +11,15 @@ from torchvision import models
 from torchvision import transforms
 
 app = FastAPI()
+
 supabase = create_client(
     os.getenv("SUPABASE_URL"),
     os.getenv("SUPABASE_KEY")
 )
-# Modelo ligero
-model = models.efficientnet_b0(weights=models.EfficientNet_B0_Weights.DEFAULT)
+
+model = models.efficientnet_b0(
+    weights=models.EfficientNet_B0_Weights.DEFAULT
+)
 model.classifier = torch.nn.Identity()
 model.eval()
 
@@ -25,13 +28,16 @@ transform = transforms.Compose([
     transforms.ToTensor(),
 ])
 
+
 class ImageRequest(BaseModel):
     image_id: int
     image_url: str
 
+
 @app.get("/")
 def root():
     return {"status": "ok"}
+
 
 @app.post("/generate-embedding")
 def generate_embedding(data: ImageRequest):
@@ -48,14 +54,6 @@ def generate_embedding(data: ImageRequest):
         embedding = model(image_tensor)
 
     vector = embedding[0].numpy().tolist()
-
-    supabase.table("images").update({
-        "processed": True,
-        "embedding": str(vector)
-    }).eq(
-        "id",
-        data.image_id
-    ).execute()
 
     return {
         "saved": True,
