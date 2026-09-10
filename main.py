@@ -1,5 +1,8 @@
 from fastapi import FastAPI
 from pydantic import BaseModel
+import os 
+from supabase import create_cliente
+
 import requests
 from PIL import Image
 from io import BytesIO
@@ -7,6 +10,11 @@ from io import BytesIO
 import torch
 from torchvision import models
 from torchvision import transforms
+
+supabase = create_client(
+    os.getenv("SUPABASE_URL"),
+    os.getenv("SUPABASE_KEY")
+)
 
 app = FastAPI()
 
