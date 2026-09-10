@@ -50,7 +50,7 @@ def generate_embedding(data: ImageRequest):
     map(str, vector)
 ) + "]"
 
-    supabase.table("images").update({
+    supabase.table("ingresos").update({
     "embedding": vector_string,
     "processed": True
 }).eq(
