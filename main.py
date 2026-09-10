@@ -1,7 +1,7 @@
 from fastapi import FastAPI
 from pydantic import BaseModel
 import os 
-from supabase import create_cliente
+from supabase import create_client
 
 import requests
 from PIL import Image
