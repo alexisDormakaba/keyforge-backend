@@ -23,8 +23,8 @@ transform = transforms.Compose([
 
 
 class ImageRequest(BaseModel):
+    image_id: str
     image_url: str
-
 
 @app.get("/")
 def root():
@@ -46,8 +46,20 @@ def generate_embedding(data: ImageRequest):
         embedding = model(image_tensor)
 
     vector = embedding[0].numpy().tolist()
+    vector_string = "[" + ",".join(
+    map(str, vector)
+) + "]"
+
+    supabase.table("images").update({
+    "embedding": vector_string,
+    "processed": True
+}).eq(
+    "id",
+    data.image_id
+).execute()
+
 
     return {
-        "dimensions": len(vector),
-        "sample": vector[:10]
+        "saved": True,
+        "dimensions": len(vector)
     }
