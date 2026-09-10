@@ -40,8 +40,25 @@ def env_test():
         "url_exists": os.getenv("SUPABASE_URL") is not None,
         "key_exists": os.getenv("SUPABASE_KEY") is not None
     }
+    
+@app.get("/")
+def root():
+    return {"status": "ok"}
 
+@app.get("/supabase-test")
 
+def supabase_test():
+
+    result = (
+        supabase
+        .table("ingresos")
+        .select("id")
+        .limit(1)
+        .execute()
+    )
+
+    return result.data
+    
 @app.post("/generate-embedding")
 def generate_embedding(data: ImageRequest):
 
