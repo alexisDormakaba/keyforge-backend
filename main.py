@@ -48,14 +48,16 @@ def generate_embedding(data: ImageRequest):
         embedding = model(image_tensor)
 
     vector = embedding[0].numpy().tolist()
+
     supabase.table("images").update({
-    "processed": True,
-    "embedding": str(vector)
-}).eq(
-    "id",
-    data.image_id
-).execute()
-  return {
-    "saved": True,
-    "dimensions": len(vector)
-}
+        "processed": True,
+        "embedding": str(vector)
+    }).eq(
+        "id",
+        data.image_id
+    ).execute()
+
+    return {
+        "saved": True,
+        "dimensions": len(vector)
+    }
