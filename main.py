@@ -1,6 +1,7 @@
 from fastapi import FastAPI
 from pydantic import BaseModel
-
+import os
+from supabase import create_client
 import requests
 from PIL import Image
 from io import BytesIO
@@ -10,7 +11,10 @@ from torchvision import models
 from torchvision import transforms
 
 app = FastAPI()
-
+supabase = create_client(
+    os.getenv("SUPABASE_URL"),
+    os.getenv("SUPABASE_KEY")
+)
 # Modelo ligero
 model = models.efficientnet_b0(weights=models.EfficientNet_B0_Weights.DEFAULT)
 model.classifier = torch.nn.Identity()
@@ -22,6 +26,7 @@ transform = transforms.Compose([
 ])
 
 class ImageRequest(BaseModel):
+    image_id: int
     image_url: str
 
 @app.get("/")
@@ -43,8 +48,14 @@ def generate_embedding(data: ImageRequest):
         embedding = model(image_tensor)
 
     vector = embedding[0].numpy().tolist()
-
-    return {
-        "dimensions": len(vector),
-        "sample": vector[:10]
-    }
+    supabase.table("images").update({
+    "processed": True,
+    "embedding": str(vector)
+}).eq(
+    "id",
+    data.image_id
+).execute()
+  return {
+    "saved": True,
+    "dimensions": len(vector)
+}
