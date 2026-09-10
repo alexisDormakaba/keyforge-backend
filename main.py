@@ -1,8 +1,25 @@
 from fastapi import FastAPI
 from pydantic import BaseModel
+
 import requests
+from PIL import Image
+from io import BytesIO
+
+import torch
+from torchvision import models
+from torchvision import transforms
 
 app = FastAPI()
+
+# Modelo ligero
+model = models.efficientnet_b0(weights=models.EfficientNet_B0_Weights.DEFAULT)
+model.classifier = torch.nn.Identity()
+model.eval()
+
+transform = transforms.Compose([
+    transforms.Resize((224, 224)),
+    transforms.ToTensor(),
+])
 
 class ImageRequest(BaseModel):
     image_url: str
@@ -11,12 +28,23 @@ class ImageRequest(BaseModel):
 def root():
     return {"status": "ok"}
 
-@app.post("/analyze-image")
-def analyze_image(data: ImageRequest):
+@app.post("/generate-embedding")
+def generate_embedding(data: ImageRequest):
 
     response = requests.get(data.image_url)
 
+    image = Image.open(
+        BytesIO(response.content)
+    ).convert("RGB")
+
+    image_tensor = transform(image).unsqueeze(0)
+
+    with torch.no_grad():
+        embedding = model(image_tensor)
+
+    vector = embedding[0].numpy().tolist()
+
     return {
-        "status_code": response.status_code,
-        "size_bytes": len(response.content)
+        "dimensions": len(vector),
+        "sample": vector[:10]
     }
