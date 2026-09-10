@@ -34,25 +34,13 @@ class ImageRequest(BaseModel):
     image_id: str
     image_url: str
 
-@app.get("/env-test")
-def env_test():
-    return {
-        "url_exists": os.getenv("SUPABASE_URL") is not None,
-        "key_exists": os.getenv("SUPABASE_KEY") is not None
-    }
-    
-@app.get("/")
-def root():
-    return {"status": "ok"}
-
 @app.get("/supabase-test")
-
 def supabase_test():
 
     result = (
         supabase
         .table("ingresos")
-        .select("id")
+        .select("*")
         .limit(1)
         .execute()
     )
