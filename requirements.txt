@@ -7,5 +7,4 @@ opencv-python-headless
 torch
 torchvision
 supabase
-rembg
-onnxruntime
+
