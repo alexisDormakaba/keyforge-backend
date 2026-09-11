@@ -1,3 +1,4 @@
+
 from fastapi import FastAPI
 from pydantic import BaseModel
 import os
@@ -13,9 +14,9 @@ from torchvision import models
 from torchvision import transforms
 
 
-# =========================
-# CONFIG
-# =========================
+# ==================================================
+# SUPABASE
+# ==================================================
 
 SUPABASE_URL = os.getenv("SUPABASE_URLs")
 SUPABASE_KEY = os.getenv("SUPABASE_PRIMARY_KEY")
@@ -25,12 +26,15 @@ supabase = create_client(
     SUPABASE_KEY
 )
 
+# ==================================================
+# FASTAPI
+# ==================================================
+
 app = FastAPI()
 
-
-# =========================
+# ==================================================
 # MODEL
-# =========================
+# ==================================================
 
 model = models.efficientnet_b0(
     weights=models.EfficientNet_B0_Weights.DEFAULT
@@ -45,9 +49,9 @@ transform = transforms.Compose([
 ])
 
 
-# =========================
-# REQUESTS
-# =========================
+# ==================================================
+# REQUEST MODELS
+# ==================================================
 
 class ImageRequest(BaseModel):
     image_id: str
@@ -59,9 +63,9 @@ class SearchRequest(BaseModel):
     match_count: int = 10
 
 
-# =========================
+# ==================================================
 # ROOT
-# =========================
+# ==================================================
 
 @app.get("/")
 def root():
@@ -70,9 +74,9 @@ def root():
     }
 
 
-# =========================
+# ==================================================
 # ENV TEST
-# =========================
+# ==================================================
 
 @app.get("/env-test")
 def env_test():
@@ -82,9 +86,9 @@ def env_test():
     }
 
 
-# =========================
+# ==================================================
 # SUPABASE TEST
-# =========================
+# ==================================================
 
 @app.get("/supabase-test")
 def supabase_test():
@@ -100,9 +104,9 @@ def supabase_test():
     return result.data
 
 
-# =========================
-# HELPER
-# =========================
+# ==================================================
+# GENERATE VECTOR
+# ==================================================
 
 def generate_vector(image_url: str):
 
@@ -124,9 +128,9 @@ def generate_vector(image_url: str):
     return vector
 
 
-# =========================
+# ==================================================
 # GENERATE EMBEDDING
-# =========================
+# ==================================================
 
 @app.post("/generate-embedding")
 def generate_embedding(data: ImageRequest):
@@ -161,9 +165,9 @@ def generate_embedding(data: ImageRequest):
     }
 
 
-# =========================
+# ==================================================
 # PROCESS PENDING
-# =========================
+# ==================================================
 
 @app.post("/process-pending")
 def process_pending():
@@ -212,7 +216,7 @@ def process_pending():
         except Exception as e:
 
             print(
-                f"Error {row['id']}: {e}"
+                f"Error procesando {row['id']}: {e}"
             )
 
             failed_count += 1
@@ -223,9 +227,9 @@ def process_pending():
     }
 
 
-# =========================
+# ==================================================
 # SEARCH
-# =========================
+# ==================================================
 
 @app.post("/search")
 def search(data: SearchRequest):
