@@ -18,7 +18,7 @@ from torchvision import transforms
 # SUPABASE
 # ==================================================
 
-SUPABASE_URL = os.getenv("SUPABASE_URLs")
+SUPABASE_URLs = os.getenv("SUPABASE_URLs")
 SUPABASE_KEY = os.getenv("SUPABASE_PRIMARY_KEY")
 
 supabase = create_client(
