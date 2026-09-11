@@ -256,4 +256,7 @@ def search(data: SearchRequest):
         .execute()
     )
 
-    return result.data
+    return {
+    "count": len(result.data),
+    "matches": result.data
+}
