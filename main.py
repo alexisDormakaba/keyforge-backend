@@ -55,11 +55,11 @@ transform = transforms.Compose([
 
 class ImageRequest(BaseModel):
     image_id: str
-    imageurl: str
+    image_url: str
 
 
 class SearchRequest(BaseModel):
-    imageurl: str
+    image_url: str
     match_count: int = 10
 
 
@@ -108,9 +108,9 @@ def supabase_test():
 # GENERATE VECTOR
 # ==================================================
 
-def generate_vector(imageurl: str):
+def generate_vector(image_url: str):
 
-    response = requests.get(imageurl)
+    response = requests.get(image_url)
 
     image = Image.open(
         BytesIO(response.content)
@@ -136,7 +136,7 @@ def generate_vector(imageurl: str):
 def generate_embedding(data: ImageRequest):
 
     vector = generate_vector(
-        data.imageurl
+        data.image_url
     )
 
     vector_string = (
@@ -175,7 +175,7 @@ def process_pending():
     rows = (
         supabase
         .table("ingresos")
-        .select("id,imageurl")
+        .select("id,image_url")
         .eq("processed", False)
         .execute()
     )
@@ -188,7 +188,7 @@ def process_pending():
         try:
 
             vector = generate_vector(
-                row["imageurl"]
+                row["image_url"]
             )
 
             vector_string = (
@@ -235,7 +235,7 @@ def process_pending():
 def search(data: SearchRequest):
 
     vector = generate_vector(
-        data.imageurl
+        data.image_url
     )
 
     vector_string = (
